@@ -2,19 +2,45 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
-// Halaman utama
+
+// Halaman Index
 Route::get('/', function () {
-    return view('welcome');
+    return view('parkir');
 });
 
 // ===============================
 //  Group untuk admin
 // ===============================
 Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    // Untuk ke page employeeList, bisa dianggap sebagai dashboard milik admin
+    Route::get('/admin/employeeList', function () {
+        return view('admin.employeeList');
+    })->name('admin.employeeList');
+
+    // Untuk ke page create admin
+     Route::get('/admin/create', function () {
+        return view('admin.createEmployee');
+    })->name('admin.createEmployee');
+
+    //Untuk ke page laporan pembayaran member
+    Route::get('/admin/member', function () {
+        return view('admin.memberReport');
+    })->name('admin.memberReport');
+    
+    //Untuk ke page laporan pembayaran non member
+    Route::get('/admin/nonmember', function () {
+        return view('admin.nonMemberReport');
+    })->name('admin.nonMemberReport');
+});
+
+// ===============================
+//  Register petugas sebagai tapi harus login sebagai admin dulu
+// ===============================
+Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
+    Route::post('/admin/create-employee', [RegisteredUserController::class, 'storeAdmin'])
+        ->name('admin.employee.store');
 });
 
 // ===============================
@@ -30,7 +56,7 @@ Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
 //  Profile Routes
 // ===============================
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });

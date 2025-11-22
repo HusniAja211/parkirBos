@@ -49,4 +49,22 @@ class RegisteredUserController extends Controller
             'message' => 'Akun berhasil dibuat! Silakan login.'
         ]);
     }
+
+    public function storeAdmin(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|confirmed|min:8',
+        ]);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'roles' => 'petugas', 
+        ]);
+
+        return redirect()->route('admin.employeeList')->with('success', 'Petugas berhasil ditambahkan.');
+    }
 }

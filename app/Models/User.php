@@ -6,6 +6,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Models\Member;
+use App\Models\Payment;
+
 
 class User extends Authenticatable
 {
@@ -45,5 +48,15 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function member()
+    {
+        return $this->hasOne(Member::class);
+    }
+
+    public function paymentsHandled()
+    {
+        return $this->hasMany(Payment::class, 'petugas_id');
     }
 }
