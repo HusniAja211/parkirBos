@@ -27,25 +27,32 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                    {{-- Dummy Data --}}
-                    @foreach([
-                        ['B 8888 AA', 'John Doe', 'Januari', '100.000', '100.000', '0', 'Budi Santoso'],
-                        ['AB 123 XY', 'Jane Smith', 'Februari', '100.000', '150.000', '50.000', 'Siti Aminah'],
-                        ['N 555 ZZ', 'Ahmad Dani', 'Maret', '100.000', '100.000', '0', 'Budi Santoso'],
-                    ] as $row)
+                   @forelse ($bills as $bill)
+                    @php
+                        $latestPayment = $bill->member->payments->sortByDesc('created_at')->first();
+                    @endphp
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $row[0] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[1] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">{{ $row[2] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[3] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[4] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $row[5] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[6] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $bill->member->license_plate }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $bill->member->user->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">{{ $bill->month }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->amount ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->cash ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->change ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $latestPayment?->petugas->name ?? '-' }}</td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr class="hover:bg-blue-50/30 transition-colors">
+                        <td colspan="7" class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 text-left">Data Kosong!</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
+        <!-- Pagination -->
+        <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+            <div class="text-xs text-slate-500">Menampilkan {{ $bills->count() }} dari {{ $bills->total() }}</div>
+        </div>
+        {{ $bills->links() }}
     </div>
 </div>
 

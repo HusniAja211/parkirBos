@@ -15,4 +15,9 @@ class Parking extends Model
     {
         return $this->hasOne(Payment::class);
     }
+
+    public function petugas()
+    {
+        return $this->hasOne(User::class);
+    }
 }

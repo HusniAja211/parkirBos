@@ -65,6 +65,6 @@ class RegisteredUserController extends Controller
             'roles' => 'petugas', 
         ]);
 
-        return redirect()->route('admin.employeeList')->with('success', 'Petugas berhasil ditambahkan.');
+        return redirect()->route('admin.employeeList.index')->with('success', 'Petugas berhasil ditambahkan.');
     }
 }

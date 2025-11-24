@@ -7,6 +7,7 @@
     
     {{-- Memuat Tailwind CSS --}}
     @vite('resources/css/app.css')
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Font Tambahan (Opsional untuk estetika) --}}
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -30,7 +31,7 @@
                     {{-- Navigation Links --}}
                     <div class="hidden sm:ml-8 sm:flex sm:space-x-8">
                         {{-- Menu Employee --}}
-                        <a href="{{ route('admin.employeeList') }}" 
+                        <a href="{{ route('admin.employeeList.index') }}" 
                            class="{{ request()->is('admin/petugas*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
                                   inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
                             Employee
@@ -47,10 +48,10 @@
                             {{-- Dropdown Menu Content --}}
                             <div class="absolute left-0 top-16 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform z-50 origin-top-left">
                                 <div class="py-1">
-                                    <a href="{{ route('admin.memberReport') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+                                    <a href="{{ route('admin.member.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">
                                         Member Report
                                     </a>
-                                    <a href="{{ route('admin.nonMemberReport') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">
+                                    <a href="{{ route('admin.nonmember.index') }}" class="block px-4 py-2 text-sm text-slate-700 hover:bg-blue-50 hover:text-blue-700">
                                         Non-Member Report
                                     </a>
                                 </div>
@@ -64,7 +65,7 @@
                     <div class="ml-3 relative group">
                         {{-- Trigger: Avatar Image --}}
                         <button class="flex text-sm border-2 border-transparent rounded-full focus:outline-none focus:border-blue-300 transition duration-150 ease-in-out items-center gap-2">
-                            <span class="hidden md:block text-sm font-medium text-slate-600">Admin User</span>
+                            <span class="hidden md:block text-sm font-medium text-slate-600">{{ Auth::user()->name }}</span>
                             <img class="h-8 w-8 rounded-full object-cover" src="https://ui-avatars.com/api/?name=Admin+Panel&background=2563eb&color=fff" alt="User Avatar">
                         </button>
 

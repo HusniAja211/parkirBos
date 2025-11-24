@@ -3,15 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Member;
+use App\Models\MonthlyBill;
 
-class Payment extends Controller
+class MemberController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        // Ambil semua monthly bills beserta relasi
+        $bills = MonthlyBill::with([
+            'member.user',           // Ambil member dan usernya
+            'member.payments.petugas' // Ambil semua payments dan petugasnya
+        ])->paginate(10);
+
+        return view('admin.memberReport', compact('bills'));
     }
 
     /**
@@ -35,7 +43,7 @@ class Payment extends Controller
      */
     public function show(string $id)
     {
-        //
+        
     }
 
     /**

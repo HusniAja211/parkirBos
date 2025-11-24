@@ -24,7 +24,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'roles',
     ];
 
     /**
@@ -50,13 +50,18 @@ class User extends Authenticatable
         ];
     }
 
-    public function member()
+    public function members()
     {
-        return $this->hasOne(Member::class);
+        return $this->hasMany(Member::class);
     }
 
-    public function paymentsHandled()
+    public function Payments()
     {
         return $this->hasMany(Payment::class, 'petugas_id');
+    }
+
+    public function parking()
+    {
+        return $this->hasMany(Parking::class);
     }
 }

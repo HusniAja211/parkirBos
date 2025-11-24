@@ -26,28 +26,24 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                    {{-- Dummy Data --}}
-                    @foreach([
-                        ['B 1234 CD', 'TKN-001', '15.000', '20.000', '5.000', 'Budi Santoso'],
-                        ['D 5678 EF', 'TKN-002', '10.000', '10.000', '0', 'Siti Aminah'],
-                        ['L 9999 GH', 'TKN-003', '25.000', '50.000', '25.000', 'Budi Santoso'],
-                    ] as $row)
+                  @forelse($parkings as $parking)
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $row[0] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono bg-slate-50 w-min rounded">{{ $row[1] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[2] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[3] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $row[4] }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $row[5] }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $parking->license_plate }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono bg-slate-50 w-min rounded">{{ $parking->token }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->total_fee }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->payment->cash ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $parking->payment->change ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->payment->petugas->name ?? '-' }}</td>
                     </tr>
-                    @endforeach
+                    @empty
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Data Kosong!</td>
+                    @endforelse
                 </tbody>
-                <tfoot class="bg-slate-50 font-semibold text-slate-700">
-                    <tr>
-                        <td colspan="2" class="px-6 py-3">Total: Rp50.000,00</td>
-                    </tr>
-                </tfoot>
             </table>
+            <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
+                <div class="text-xs text-slate-500">Menampilkan {{ $parkings->count(0) }} dari {{ $parkings->total() }}</div>
+            </div>
+            {{ $parkings->links() }}
         </div>
     </div>
 </div>

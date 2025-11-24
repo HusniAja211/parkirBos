@@ -3,7 +3,9 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
-
+use App\Http\Controllers\MemberController;
+use App\Http\Controllers\NonMemberController;
+use App\Http\Controllers\UserController;
 
 // Halaman Index
 Route::get('/', function () {
@@ -11,49 +13,43 @@ Route::get('/', function () {
 });
 
 // ===============================
-//  Group untuk admin
+// Group untuk admin
 // ===============================
-Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    // Untuk ke page employeeList, bisa dianggap sebagai dashboard milik admin
-    Route::get('/admin/employeeList', function () {
-        return view('admin.employeeList');
-    })->name('admin.employeeList');
+Route::middleware(['auth', 'verified', 'role:admin'])
+    ->prefix('admin')
+    ->name('admin.')
+    ->group(function () {
 
-    // Untuk ke page create admin
-     Route::get('/admin/create', function () {
-        return view('admin.createEmployee');
-    })->name('admin.createEmployee');
+        // Resource employeeList (index, create, store, show, edit, update, destroy)
+        Route::resource('employeeList', UserController::class);
 
-    //Untuk ke page laporan pembayaran member
-    Route::get('/admin/member', function () {
-        return view('admin.memberReport');
-    })->name('admin.memberReport');
-    
-    //Untuk ke page laporan pembayaran non member
-    Route::get('/admin/nonmember', function () {
-        return view('admin.nonMemberReport');
-    })->name('admin.nonMemberReport');
-});
+        // page laporan pembayaran member
+        Route::resource('member', MemberController::class)->only(['index']);
+        Route::resource('nonmember', NonMemberController::class)->only(['index']);
+
+        // Register petugas tapi harus login sebagai admin dulu
+        Route::post('/create-employee', [RegisteredUserController::class, 'storeAdmin'])
+            ->name('employee.store');
+    });
 
 // ===============================
-//  Register petugas sebagai tapi harus login sebagai admin dulu
+// Group untuk petugas
 // ===============================
-Route::middleware(['auth', 'verified', 'role:admin'])->group(function () {
-    Route::post('/admin/create-employee', [RegisteredUserController::class, 'storeAdmin'])
-        ->name('admin.employee.store');
-});
+Route::middleware(['auth', 'verified', 'role:petugas'])
+    ->prefix('petugas')
+    ->name('petugas.')
+    ->group(function () {
+
+        Route::get('/dashboard', [UserController::class, 'indexPetugas'])->name('dashboard');
+        Route::get('/dashboard/create', [UserController::class, 'createPetugas'])->name('dashboard.create');
+        Route::post('/dashboard', [UserController::class, 'storePetugas'])->name('dashboard.store');
+        Route::get('/dashboard/{user}/edit', [UserController::class, 'editPetugas'])->name('dashboard.edit');
+        Route::put('/dashboard/{user}', [UserController::class, 'updatePetugas'])->name('dashboard.update');
+        Route::delete('/dashboard/{user}', [UserController::class, 'destroyPetugas'])->name('dashboard.destroy');
+    });
 
 // ===============================
-// 🧩Group untuk petugas
-// ===============================
-Route::middleware(['auth', 'verified', 'role:petugas'])->group(function () {
-    Route::get('/petugas/dashboard', function () {
-        return view('petugas.dashboard');
-    })->name('petugas.dashboard');
-});
-
-// ===============================
-//  Profile Routes
+// Profile Routes
 // ===============================
 Route::middleware('auth')->group(function () {
     Route::get('/admin/profile', [ProfileController::class, 'edit'])->name('profile.edit');

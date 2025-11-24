@@ -6,14 +6,17 @@ use Illuminate\Database\Eloquent\Model;
 
 class Member extends Model
 {
+
+    protected $fillable = [
+        'amount',
+        'cash',
+        'chage',
+        'type',
+    ];
+
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function bills()
-    {
-        return $this->hasMany(MonthlyBill::class);
     }
 
     public function parkings()
