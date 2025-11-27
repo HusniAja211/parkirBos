@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Parking;
 
-class Parking extends Controller
+class ParkingController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
+        $parkings = Parking::latest()->paginate(5);
+
+        return view('petugas.parking', compact('parkings'));
     }
 
     /**

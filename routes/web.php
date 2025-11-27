@@ -7,6 +7,7 @@ use App\Http\Controllers\MemberController;
 use App\Http\Controllers\NonMemberController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ParkingController;
 
 // Halaman Index
 Route::get('/', function () {
@@ -36,12 +37,13 @@ Route::middleware(['auth', 'verified', 'role:admin'])
 // ===============================
 // Group untuk petugas
 // ===============================
-Route::middleware(['auth', 'verified', 'role:petugas'])
+Route::middleware(['auth', 'verified'])
     ->prefix('petugas')
     ->name('petugas.')
     ->group(function () {
         Route::resource('dashboard', UserController::class);
         Route::resource('member', MemberController::class);
+        Route::resource('parking', ParkingController::class);
 
     });
 

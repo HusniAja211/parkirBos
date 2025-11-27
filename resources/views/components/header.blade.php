@@ -77,7 +77,7 @@
                         </div>
                     <!-- Khusus Petugas -->
                         @elseif(Auth::user()->roles === 'petugas')
-                            <a href="{{ route('petugas.member.index') }}" 
+                            <a href="{{ route('petugas.parking.index') }}" 
                             class="border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
                                     inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
                                 Parking

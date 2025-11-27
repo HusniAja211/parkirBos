@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Member;
 use App\Models\Status;
+use Illuminate\Validation\Rule;
+
 class MemberController extends Controller
 {
     /**
@@ -29,25 +31,21 @@ class MemberController extends Controller
      */
     public function store(Request $request)
     {   
-        // Validasi Data
         $request->validate([
             'name' => ['required', 'string', 'max:100'],
             'nik' => ['required', 'digits:16', 'unique:members,nik'],
             'email' => ['required', 'email:rfc,dns', 'max:100', 'unique:members,email'],
         ]);
 
-        $status = Status::where('name', 'lunas')->firstOrFail();
-        
-        // Masukkan ke Database
         Member::create([
             'name' => $request->name,
             'nik' => $request->nik,
-            'email' => $request->name,
-            'status_id' => Status::where('name', 'lunas')->value('id'),
+            'email' => $request->email,
+            'status_id' => Status::where('name', 'lunas')->value('id')
         ]);
-        return redirect()
-        ->route('petugas.member.index')
-        ->with('success', 'Member berhasil ditambahkan.');
+
+        return redirect()->route('petugas.member.index')->with(['success' => 'Data Berhasil Disimpan!']);
+       
     }
 
     /**
@@ -55,10 +53,7 @@ class MemberController extends Controller
      */
     public function show(string $id)
     {
-        $member = Member::findOrFail($id);
-        $statuses = Status::all();
 
-        return view('petugas.member.edit', compact('member', 'statuses'));
     }
 
     /**
@@ -66,7 +61,10 @@ class MemberController extends Controller
      */
     public function edit(string $id)
     {
+        $member = Member::findOrFail($id);
+        $statuses = Status::all();
 
+        return view('petugas.editMember', compact('member', 'statuses'));
     }
 
     /**
@@ -74,7 +72,23 @@ class MemberController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $member = Member::findOrFail($id);
+
+        $request->validate([
+            'name' => ['required', 'string', 'max:100'],
+            'nik' => ['required', 'digits:16', Rule::unique('members', 'nik')->ignore($member->id)],
+            'email' => ['required', 'email:rfc,dns', 'max:100', Rule::unique('members', 'email')->ignore($member->id)],
+        ]);
+
+        $member->name = $request->name;
+        $member->nik = $request->nik;
+        $member->email = $request->email;
+
+        $member->save();
+
+        return redirect()
+            ->route('petugas.member.index')
+            ->with('success', 'Data member berhasil diperbarui!');
     }
 
     /**
@@ -82,6 +96,11 @@ class MemberController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $member = Member::findOrFail($id);
+
+        $member->delete();
+        return redirect()
+            ->route('petugas.member.index')
+            ->with('success', 'Data member berhasil Dihapus!');
     }
 }

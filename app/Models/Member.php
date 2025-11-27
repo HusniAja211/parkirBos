@@ -8,7 +8,9 @@ class Member extends Model
 {
 
     protected $fillable = [
-        'license_plate',
+        'name',
+        'nik',
+        'email',
         'status_id',
     ];
 
