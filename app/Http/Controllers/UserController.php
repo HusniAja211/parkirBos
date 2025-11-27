@@ -17,12 +17,12 @@ class UserController extends Controller
     {
         $search = $request->search;
 
-        // Tentukan role berdasarkan route
-        $role = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        // Tentukan roles berdasarkan route
+        $roles = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
 
         $query = User::query();
-        if ($role === 'petugas') {
-            $query->where('role', 'petugas');
+        if ($roles === 'petugas') {
+            $query->where('roles', 'petugas');
         }
 
         $users = $query->when($search, function ($q, $search) {
@@ -33,7 +33,7 @@ class UserController extends Controller
         ->paginate(5)
         ->withQueryString();
 
-        $view = $role === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList';
+        $view = $roles === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList';
 
         return view($view, compact('users', 'search'));
     }
@@ -45,8 +45,8 @@ class UserController extends Controller
      */
     public function create(Request $request)
     {
-        $role = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
-        $view = $role === 'petugas' ? 'petugas.create' : 'admin.createEmployee';
+        $roles = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        $view = $roles === 'petugas' ? 'petugas.create' : 'admin.createEmployee';
 
         return view($view);
     }
@@ -58,7 +58,7 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $role = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        $roles = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
 
         $request->validate([
             'name' => 'required|string|max:255',
@@ -69,14 +69,14 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $role === 'petugas' ? 'petugas' : ($request->role ?? 'admin'),
+            'roles' => $roles === 'petugas' ? 'petugas' : ($request->roles ?? 'admin'),
             'password' => bcrypt($request->password),
         ]);
 
-        $redirect = $role === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList';
+        $redirect = $roles === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList';
 
         return redirect()->route($redirect)
-            ->with('success', ucfirst($role) . ' berhasil ditambahkan.');
+            ->with('success', ucfirst($roles) . ' berhasil ditambahkan.');
     }
 
     /**
@@ -86,8 +86,8 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $role = str_contains(request()->route()->getName(), 'petugas') ? 'petugas' : 'admin';
-        $view = $role === 'petugas' ? 'petugas.show' : 'admin.showEmployee';
+        $roles = str_contains(request()->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        $view = $roles === 'petugas' ? 'petugas.show' : 'admin.showEmployee';
 
         return view($view, compact('user'));
     }
@@ -100,13 +100,13 @@ class UserController extends Controller
      */
     public function edit(Request $request, User $employeeList)
     {
-        $role = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        $roles = str_contains($request->route()->getName(), 'petugas') ? 'petugas' : 'admin';
 
-        if ($role === 'petugas' && $employeeList->role !== 'petugas') {
+        if ($roles === 'petugas' && $employeeList->roles !== 'petugas') {
             abort(403);
         }
 
-        $view = $role === 'petugas' ? 'petugas.edit' : 'admin.editEmployee';
+        $view = $roles === 'petugas' ? 'petugas.edit' : 'admin.editEmployee';
         return view($view, ['user' => $employeeList]);
     }
 
@@ -147,7 +147,7 @@ class UserController extends Controller
 
     public function destroy($employeeList)
     {
-        $role = str_contains(request()->route()->getName(), 'petugas') ? 'petugas' : 'admin';
+        $roles = str_contains(request()->route()->getName(), 'petugas') ? 'petugas' : 'admin';
         $user = User::findOrFail($employeeList);
 
         // Kalau user mencoba hapus dirinya sendiri
@@ -157,14 +157,14 @@ class UserController extends Controller
                 ->with('error', 'Anda tidak bisa menghapus akun yang sedang digunakan!');
         }
 
-        if ($role === 'petugas' && $employeeList->role !== 'petugas') {
+        if ($roles === 'petugas' && $employeeList->roles !== 'petugas') {
             abort(403);
         }
 
         $user->delete();
-        $redirect = $role === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList.index';
+        $redirect = $roles === 'petugas' ? 'petugas.dashboard' : 'admin.employeeList.index';
 
         return redirect()->route($redirect)
-            ->with('success', ucfirst($role) . ' berhasil dihapus.');
+            ->with('success', ucfirst($roles) . ' berhasil dihapus.');
     }
 }

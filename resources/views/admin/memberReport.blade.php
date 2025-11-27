@@ -27,18 +27,18 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                   @forelse ($bills as $bill)
-                    @php
+                   @forelse ($payments as $payment)
+                    <!-- @php
                         $latestPayment = $bill->member->payments->sortByDesc('created_at')->first();
-                    @endphp
+                    @endphp -->
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $bill->member->license_plate }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $bill->member->user->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">{{ $bill->month }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->amount ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->cash ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ $latestPayment?->change ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $latestPayment?->petugas->name ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $payment->monthlyBill->member->no_plat }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->monthlyBill->member->name }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-blue-600 font-semibold">{{ $payment->monthlyBill->month }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ number_format($payment->bill) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ number_format($payment->cash) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Rp {{ number_format($payment->change) }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->employee->name }}</td>
                     </tr>
                     @empty
                     <tr class="hover:bg-blue-50/30 transition-colors">
@@ -50,9 +50,9 @@
         </div>
         <!-- Pagination -->
         <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-            <div class="text-xs text-slate-500">Menampilkan {{ $bills->count() }} dari {{ $bills->total() }}</div>
+            <div class="text-xs text-slate-500">Menampilkan {{ $payments->count() }} dari {{ $payments->total() }}</div>
         </div>
-        {{ $bills->links() }}
+        {{ $payments->links() }}
     </div>
 </div>
 

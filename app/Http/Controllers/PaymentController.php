@@ -12,7 +12,12 @@ class PaymentController extends Controller
      */
     public function index()
     {
-        
+       $payments = Payment::with([
+        'monthlyBill.member',
+            'employee'
+        ])->latest()->paginate(5);
+
+        return view('admin.memberReport', compact('payments'));
     }
 
     /**

@@ -50,11 +50,6 @@ class User extends Authenticatable
         ];
     }
 
-    public function members()
-    {
-        return $this->hasMany(Member::class);
-    }
-
     public function Payments()
     {
         return $this->hasMany(Payment::class, 'petugas_id');

@@ -7,10 +7,7 @@
             <h1 class="text-2xl font-bold text-slate-800">Daftar Petugas</h1>
             <p class="text-sm text-slate-500 mt-1">Kelola data akun petugas yang terdaftar.</p>
         </div>
-        <a href="{{ route('admin.employeeList.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-800 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Tambah Petugas
-        </a>
+        
     </div>
 
     <!--Search & Content -->

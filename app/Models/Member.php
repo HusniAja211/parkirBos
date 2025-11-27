@@ -8,16 +8,9 @@ class Member extends Model
 {
 
     protected $fillable = [
-        'amount',
-        'cash',
-        'chage',
-        'type',
+        'license_plate',
+        'status_id',
     ];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
 
     public function parkings()
     {
@@ -27,5 +20,10 @@ class Member extends Model
     public function payments()
     {
         return $this->hasMany(Payment::class);
+    }
+
+    public function status()
+    {
+        return $this->belongsTo(Status::class);
     }
 }

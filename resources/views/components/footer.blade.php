@@ -18,5 +18,13 @@
         </div>
     </footer>
 
+@if(session('success'))
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    showSuccessAlert("{{ session('success') }}");
+});
+</script>
+@endif
+
 </body>
 </html>
