@@ -12,6 +12,29 @@
         </a>
     </div>
 
+    <!--Search & Content -->
+        <form method="GET" action="{{ route('petugas.member.index') }}" class="mb-4 flex gap-2">
+        <input 
+            type="text" 
+            name="search" 
+            value="{{ request('search') }}" 
+            placeholder="Cari nama atau email..." 
+            class="border rounded px-3 py-2 w-64 focus:outline-none focus:ring focus:ring-blue-300">
+
+            <button 
+                type="submit" 
+                class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                Cari
+            </button>
+
+            @if(request('search'))
+                <a href="{{ route('petugas.member.index') }}" 
+                class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                    Reset
+                </a>
+            @endif
+        </form>
+
     <div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-slate-200">

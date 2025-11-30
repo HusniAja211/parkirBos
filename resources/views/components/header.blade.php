@@ -31,7 +31,7 @@
                             </div>
                         @elseif(Auth::user()->roles === 'petugas')
                             <div class="shrink-0 flex items-center">
-                                <a href="{{ route('petugas.dashboard.index') }}"><span class="text-2xl font-bold text-blue-600 tracking-tight">Petugas<span class="text-slate-700">Panel</span></span></a>
+                                <span class="text-2xl font-bold text-blue-600 tracking-tight">Petugas<span class="text-slate-700">Panel</span></span>
                             </div>
                         @endif
 
@@ -78,8 +78,8 @@
                     <!-- Khusus Petugas -->
                         @elseif(Auth::user()->roles === 'petugas')
                             <a href="{{ route('petugas.parking.index') }}" 
-                            class="border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
-                                    inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
+                            class="text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
+                                    inline-flex items-center px-1 pt-1 text-sm font-medium transition duration-150 ease-in-out">
                                 Parking
                             </a>
                         @endif

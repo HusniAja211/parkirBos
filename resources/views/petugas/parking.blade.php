@@ -17,39 +17,25 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50 border-b border-slate-200">
                     <tr class="bg-blue-600">
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">No</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Token</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Member</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Kategori</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">License Plate</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Check In</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Check Out</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Total Fee</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">No</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Token</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Member</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Kategori</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Check In</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Check Out</th>
+                        <th class="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Total Fee</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                    @forelse ($parkings as $parking)
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $parking->token }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $parking->member->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->kategori}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->license_plate}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->check_in}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->check_out}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->total_fee}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">
-                            <a href="{{ route('petugas.member.edit', $member->id) }}" class="text-amber-600 hover:text-amber-800 font-medium transition">Update</a>
-                            <span class="text-slate-300">|</span>
-                             <form action="{{ route('petugas.member.destroy', $member->id) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button"
-                                    class="text-red-600 hover:text-red-800 font-medium delete-btn">
-                                    Delete
-                                </button>
-                            </form>
-                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $loop->iteration }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $parking->token }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $parking->member->name ?? 'non member'}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->kategori}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->check_in}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->check_out ?? 'Belum keluar'}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->total_fee}}</td>
                     </tr>
                     @empty
                     <tr class="hover:bg-blue-50/30 transition-colors">

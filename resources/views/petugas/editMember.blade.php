@@ -11,24 +11,34 @@
             <form action="{{ route('petugas.member.update', $member->id) }}" method="POST" class="space-y-6">
                 @csrf
                 @method('PUT')
+                <!-- Input Name -->
                 <div>
                     <label for="name" class="block text-sm font-medium text-slate-700 mb-1">Name</label>
                     <input type="text" name="name" id="name"
                      class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition" 
                      required autocomplete="off" value="{{ old('nik', $member->name) }}" >
                 </div>
+                <!-- Input NIK -->
                  <div>
                     <label for="nik" class="block text-sm font-medium text-slate-700 mb-1">NIK</label>
                     <input type="text" name="nik" id="nik" value="{{ old('nik', $member->nik) }}"
                      class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition" 
                      required autocomplete="off" minlength="16" maxlength="16" >
                 </div>
+                <!-- Input Email -->
                  <div>
                     <label for="email" class="block text-sm font-medium text-slate-700 mb-1">Email</label>
                     <input type="email" name="email" id="email" 
                      class="mt-1 block w-full rounded-lg border-slate-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition" 
                      required autocomplete="off" value="{{ old('nik', $member->email) }}">
                 </div>
+                <!-- QR CODE -->
+                <div class="flex flex-col items-center border-2 border-blue-600 rounded-xl p-4 w-80 shadow-md text-center">
+                    <img src="{{ asset('qrcodes/' . $member->qr_code) }}"
+                    alt="QR Code Member"
+                    width="200">
+                </div>
+                <!-- Button -->
                 <div class="pt-4 flex items-center justify-end space-x-4">
                     <a href="{{ route('petugas.member.index') }}" class="text-sm text-slate-500 hover:text-slate-800 font-medium transition">Cancel</a>
                     <button type="submit" class="inline-flex justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
@@ -58,3 +68,4 @@ document.addEventListener('DOMContentLoaded', function () {
 @endif
 
 @include('components.footer')
+

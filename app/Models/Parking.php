@@ -10,7 +10,6 @@ class Parking extends Model
     protected $fillable = [
         'token',
         'kategori',
-        'license_plate',
         'check_in',
         'check_out',
         'total_fee',

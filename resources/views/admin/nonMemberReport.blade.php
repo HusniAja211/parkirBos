@@ -26,14 +26,14 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
-                  @forelse($parkings as $parking)
+                  @forelse($payments as $payment)
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $parking->license_plate }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono bg-slate-50 w-min rounded">{{ $parking->token }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->total_fee }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->payment->cash ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $parking->payment->change ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $parking->payment->petugas->name ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $payment->license_plate }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono bg-slate-50 w-min rounded">{{ $payment->token }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->total_fee }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->payment->cash ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $payment->payment->change ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->petugas->name ?? '-' }}</td>
                     </tr>
                     @empty
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Data Kosong!</td>
@@ -41,9 +41,9 @@
                 </tbody>
             </table>
             <div class="px-6 py-4 border-t border-slate-200 bg-slate-50">
-                <div class="text-xs text-slate-500">Menampilkan {{ $parkings->count(0) }} dari {{ $parkings->total() }}</div>
+                <div class="text-xs text-slate-500">Menampilkan {{ $payments->count(0) }} dari {{ $payments->total() }}</div>
             </div>
-            {{ $parkings->links() }}
+            {{ $payments->links() }}
         </div>
     </div>
 </div>

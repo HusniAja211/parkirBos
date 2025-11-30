@@ -55,7 +55,7 @@
                     value="{{ old('email') }}" 
                     required 
                     autofocus 
-                    autocomplete="username" 
+                    autocomplete="off" 
                 />
                 <!-- Error Handling (Mempertahankan logika Laravel) -->
                 @error('email')
@@ -75,7 +75,7 @@
                     type="password"
                     name="password"
                     required 
-                    autocomplete="current-password" 
+                    autocomplete="off" 
                 />
 
                 <!-- Error Handling (Mempertahankan logika Laravel) -->
@@ -94,13 +94,6 @@
 
             <!-- Tombol dan Link -->
             <div class="flex flex-col sm:flex-row justify-between items-center mt-6 space-y-4 sm:space-y-0">
-               
-                <!-- Link Register -->
-                <a class="underline text-sm text-gray-600 hover:text-blue-700 transition"
-                       href="{{ route('register') }}">
-                        {{ __("Don't have an account?") }}
-                </a>    
-
                 <div class="flex items-center space-x-3">
                     
                     <!-- Link Forgot Password -->

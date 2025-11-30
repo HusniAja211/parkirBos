@@ -44,6 +44,11 @@ Route::middleware(['auth', 'verified'])
         Route::resource('dashboard', UserController::class);
         Route::resource('member', MemberController::class);
         Route::resource('parking', ParkingController::class);
+        Route::resource('payment', PaymentController::class);
+       
+         // Checkout NON MEMBER
+        Route::get('/checkout/{parking}', [PaymentController::class, 'checkout'])->name('checkout.show');
+        Route::post('/checkout/{parking}', [PaymentController::class, 'store'])->name('checkout.store');
 
     });
 

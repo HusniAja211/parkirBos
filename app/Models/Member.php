@@ -12,6 +12,7 @@ class Member extends Model
         'nik',
         'email',
         'status_id',
+        'qr_code',
     ];
 
     public function parkings()
