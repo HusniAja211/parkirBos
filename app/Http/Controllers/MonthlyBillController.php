@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\MonthlyBill;
 use Illuminate\Http\Request;
 
 class MonthlyBillController extends Controller
@@ -11,7 +12,9 @@ class MonthlyBillController extends Controller
      */
     public function index()
     {
-        //
+        $monthly_bills = MonthlyBill::latest()->paginate(5);
+
+        return view('admin.memberReport', compact('monthly_bills'));
     }
 
     /**

@@ -1,48 +1,65 @@
-@include('components.header', ['title' => 'Laporan Pembayaran Member'])
+@include('components.header', ['title' => 'Checkout Pembayaran'])
 
-<div class="max-w-lg mx-auto bg-white shadow-lg p-6 rounded-2xl mt-8">
+<div class="mx-auto mt-10 max-w-lg rounded-2xl bg-white p-6 shadow-lg">
+    <h2 class="mb-6 text-center text-3xl font-bold text-slate-800">Checkout Pembayaran</h2>
 
-    <h2 class="text-3xl font-bold mb-6 text-center text-slate-800">
-        Checkout Non Member
-    </h2>
-
-    @if(session('success'))
-        <div class="bg-green-100 border border-green-300 text-green-700 px-4 py-3 rounded-lg mb-5">
+    {{-- SUCCESS MESSAGE --}}
+    @if (session('success'))
+        <div class="mb-5 rounded-lg border border-green-300 bg-green-100 px-4 py-3 text-green-700">
             {{ session('success') }}
         </div>
     @endif
 
-    <div class="space-y-2 mb-6 text-slate-700">
-        <p class="flex justify-between"><span class="font-semibold">Token:</span> <span>{{ $parking->token }}</span></p>
-        <p class="flex justify-between"><span class="font-semibold">No Plat:</span> <span>{{ $parking->license_plate }}</span></p>
-        <p class="flex justify-between"><span class="font-semibold">Kategori:</span> <span>{{ ucfirst($parking->kategori) }}</span></p>
-        <p class="flex justify-between"><span class="font-semibold">Check In:</span> <span>{{ $parking->check_in }}</span></p>
-        <p class="flex justify-between"><span class="font-semibold">Check Out:</span> <span>{{ $parking->check_out ?? now() }}</span></p>
-        <p class="flex justify-between text-lg">
-            <span class="font-bold">Total Biaya:</span>
-            <span class="font-bold text-blue-600">Rp {{ number_format($parking->total_fee, 0, ',', '.') }}</span>
-        </p>
+    {{-- ERROR MESSAGE --}}
+    @if (session('error'))
+        <div class="mb-5 rounded-lg border border-red-300 bg-red-100 px-4 py-3 text-red-700">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- DATA PARKIR --}}
+    <div id="parkingData" data-duration="{{ $parking->duration }}"></div>
+
+    {{-- DETAIL PARKING --}}
+    <div class="mb-6 rounded-xl border border-blue-200 bg-blue-50 p-4">
+        <h3 class="mb-2 text-xl font-semibold text-blue-800">Detail Parkir</h3>
+
+        <p class="text-slate-700"><strong>ID Parkir:</strong> {{ $parking->id }}</p>
+        <p class="text-slate-700"><strong>Waktu Masuk:</strong> {{ $parking->check_in->format('H:i') }}</p>
+        <p class="text-slate-700"><strong>Waktu Keluar:</strong> {{ $parking->check_out->format('H:i') }}</p>
+        <p class="text-slate-700"><strong>Durasi Parkir:</strong> {{ $parking->formatted_duration }}</p>
+        <p class="text-slate-700"><strong>Total Biaya:</strong> <span id="totalFee" class="font-bold text-blue-700">Rp 0</span></p>
     </div>
 
-    <form action="{{ route('petugas.checkout.store', $parking->id) }}" method="POST" class="space-y-4">
+    {{-- FORM PEMBAYARAN --}}
+    <form action="{{ route('petugas.payment.store') }}" method="POST" class="space-y-4">
         @csrf
 
-        <div>
-            <label class="block font-medium mb-1 text-slate-700">Uang Tunai:</label>
-            <input type="number" 
-                   name="cash" 
-                   class="w-full border border-slate-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition p-3 rounded-lg"
-                   required>
-            @error('cash')
-                <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-            @enderror
-        </div>
+        <label class="block font-medium text-slate-700">Kategori Kendaraan:</label>
+        <select name="kategori" id="kategori" class="w-full rounded-lg border border-slate-300 p-3 text-lg transition focus:border-blue-600 focus:ring focus:ring-blue-200" 
+        required>
+            <option value="">-- Pilih Kategori --</option>
+            <option value="motor">Motor</option>
+            <option value="mobil">Mobil</option>
+        </select>
 
-        <button class="bg-blue-600 hover:bg-blue-700 transition text-white font-semibold px-4 py-3 rounded-lg w-full shadow">
+        <label class="block font-medium text-slate-700">License Plate:</label>
+        <input type="text" name="license_plate" class="w-full rounded-lg border border-slate-300 p-3 text-lg transition focus:border-blue-600 focus:ring focus:ring-blue-200" 
+        placeholder="B1234XYZ tanpa spasi" required/>
+
+        @if(!$parking->member_id)
+        <!-- Hanya untuk non member -->
+        <label class="block font-medium text-slate-700">Uang Diterima (Cash):</label>
+        <input type="number" name="cash" class="w-full rounded-lg border border-slate-300 p-3 text-lg transition focus:border-blue-600 focus:ring focus:ring-blue-200" 
+        placeholder="Masukkan uang tunai" required/>
+        @endif
+
+        <input type="hidden" name="parking_id" value="{{ $parking->id }}" />
+        <button class="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white shadow transition hover:bg-blue-700">
             Bayar Sekarang
         </button>
     </form>
-
 </div>
 
+@vite('resources/js/checkout.js')
 @include('components.footer')

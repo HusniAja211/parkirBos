@@ -34,7 +34,7 @@
                 </div>
                 <!-- QR CODE -->
                 <div class="flex flex-col items-center border-2 border-blue-600 rounded-xl p-4 w-80 shadow-md text-center">
-                    <img src="{{ asset('qrcodes/' . $member->qr_code) }}"
+                    <img src="{{ asset('qrcodes_members/' . $member->qr_code) }}"
                     alt="QR Code Member"
                     width="200">
                 </div>

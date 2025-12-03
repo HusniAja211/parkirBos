@@ -6,7 +6,6 @@
     <title>{{ $title ?? 'Admin Dashboard' }}</title>
     
     <!-- {{-- Memuat Tailwind CSS --}} -->
-    @vite('resources/css/app.css')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <!-- {{-- Font Tambahan (Opsional untuk estetika) --}} -->
@@ -31,7 +30,7 @@
                             </div>
                         @elseif(Auth::user()->roles === 'petugas')
                             <div class="shrink-0 flex items-center">
-                                <span class="text-2xl font-bold text-blue-600 tracking-tight">Petugas<span class="text-slate-700">Panel</span></span>
+                                <a href="{{ route('petugas.payment.create') }}"><span class="text-2xl font-bold text-blue-600 tracking-tight">Petugas<span class="text-slate-700">Panel</span></span></a>
                             </div>
                         @endif
 
@@ -47,10 +46,15 @@
                         <!-- Khusus Petugas -->
                         @elseif(Auth::user()->roles === 'petugas')
                             <a href="{{ route('petugas.member.index') }}" 
-                           class="{{ request()->is('admin/report*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
-                                  inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
-                            Member
-                        </a>
+                                class="{{ request()->is('admin/report*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
+                                    inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
+                                    Member
+                            </a>
+                            <a href="{{ route('petugas.memberPayment') }}" 
+                                class="{{ request()->is('admin/report*') ? 'border-blue-500 text-blue-600' : 'border-transparent text-slate-500 hover:border-blue-300 hover:text-blue-500' }} 
+                                    inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition duration-150 ease-in-out">
+                                    Bayar Member Bulanan
+                            </a>
                         @endif
                     
                         @if(Auth::user()->roles === 'admin')

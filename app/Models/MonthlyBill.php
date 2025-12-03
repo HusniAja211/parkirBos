@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class MonthlyBill extends Model
 {
     protected $fillable = [
+        'member_id',
         'month',
         'amount',
         'status',
@@ -18,7 +19,6 @@ class MonthlyBill extends Model
     }
 
     public function payment() {
-        return $this->hasOne(Payment::class, 'member_id', 'member_id')
-                    ->latest('created_at');
+       return $this->hasOne(Payment::class, 'monthly_bill_id');
     }
 }

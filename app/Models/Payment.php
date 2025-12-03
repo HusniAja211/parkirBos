@@ -7,12 +7,16 @@ use Illuminate\Database\Eloquent\Model;
 class Payment extends Model
 {
     protected $fillable = [
+        'parking_id',
+        'member_id',
+        'monthly_bill_id',
         'amount',
         'cash',
         'change',
         'type',
-        'petugas_id'
-        
+        'petugas_id',
+        'kategori',
+        'license_plate'
     ];
 
     public function parking()
@@ -26,6 +30,16 @@ class Payment extends Model
     }
 
     public function petugas()
+    {
+        return $this->belongsTo(User::class, 'petugas_id');
+    }
+
+    public function monthlyBill()
+    {
+        return $this->belongsTo(MonthlyBill::class, 'monthly_bill_id');
+    }
+
+    public function employee()
     {
         return $this->belongsTo(User::class, 'petugas_id');
     }

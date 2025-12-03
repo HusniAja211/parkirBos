@@ -17,23 +17,30 @@
             <table class="min-w-full divide-y divide-slate-200">
                 <thead class="bg-slate-50 border-b border-slate-200">
                     <tr class="bg-blue-600">
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">No Plat</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Token</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Bills (Rp)</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Cash (Rp)</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Change (Rp)</th>
-                        <th class="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Employee Name</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">#</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">Token</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">Kategori</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">Check In</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">Check Out</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-white">Bills (Rp)</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-white">Cash (Rp)</th>
+                        <th class="px-4 py-2 text-right text-sm font-medium text-white">Change (Rp)</th>
+                        <th class="px-4 py-2 text-left text-sm font-medium text-white">Petugas</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-slate-200">
                   @forelse($payments as $payment)
                     <tr class="hover:bg-blue-50/30 transition-colors">
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $payment->license_plate }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600 font-mono bg-slate-50 w-min rounded">{{ $payment->token }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->total_fee }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->payment->cash ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-green-600 font-medium">{{ $payment->payment->change ?? '-' }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">{{ $payment->petugas->name ?? '-' }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800">{{ $payments->firstItem() + $loop->index }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> {{ optional($payment->parking)->token ?? '-' }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> {{ optional($payment)->kategori ?? '-' }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> {{ optional($payment->parking)->check_in ? optional($payment->parking)->check_in->format('Y-m-d H:i') : '-' }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> {{ optional($payment->parking)->check_out ? optional($payment->parking)->check_out->format('Y-m-d H:i') : '-' }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> Rp {{ number_format($payment->amount ?? 0, 0, ',', '.') }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> Rp {{ number_format($payment->cash ?? 0, 0, ',', '.') }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> Rp {{ number_format($payment->change ?? 0, 0, ',', '.') }} </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-800"> {{ $payment->petugas->name ?? '-' }} </td>
+                       
                     </tr>
                     @empty
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-slate-600">Data Kosong!</td>

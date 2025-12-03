@@ -29,4 +29,9 @@ class Member extends Model
     {
         return $this->belongsTo(Status::class);
     }
+
+    public function monthlyBills()
+    {
+        return $this->hasMany(MonthlyBill::class);
+    }
 }

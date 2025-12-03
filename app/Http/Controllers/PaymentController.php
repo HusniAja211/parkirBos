@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use App\Models\Payment;
 use App\Models\Parking;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Member;
+use App\Models\MonthlyBill;
+use App\Models\Status;
+
 class PaymentController extends Controller
 {
     /**
@@ -16,19 +21,12 @@ class PaymentController extends Controller
        $payments = Payment::with([
         'monthlyBill.member',
             'employee'
-        ])->latest()->paginate(5);
+        ])
+        ->whereNotNull('member_id')
+        ->latest()
+        ->paginate(5);
 
         return view('admin.memberReport', compact('payments'));
-    }
-
-    public function checkout(Parking $parking)
-    {
-        // Hitung total biaya jika belum dihitung
-        if (!$parking->total_fee) {
-            $parking->total_fee = $this->calculateFee($parking);
-        }
-
-        return view('petugas.checkout', compact('parking'));
     }
 
     /**
@@ -36,46 +34,101 @@ class PaymentController extends Controller
      */
     public function create()
     {
-        //
+        return view("petugas.scanout");
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, Parking $parking)
+    public function store(Request $request)
     {
         $request->validate([
-            'cash' => 'required|numeric|min:' . $parking->total_fee,
+            'parking_id'    => 'required|integer|exists:parkings,id',
+            'cash'          => 'nullable|numeric|min:0', // hanya untuk non-member
+            'kategori'      => 'required|in:motor,mobil',
+            'license_plate' => 'required|regex:/^[A-Z][0-9]{1,4}[A-Z]{1,3}$/i',
         ]);
 
-         $cash = $request->cash;
-        $change = $cash - $parking->total_fee;
+        // Ambil parking
+        $parking = Parking::with('member', 'payment')->findOrFail($request->parking_id);
 
-        // Simpan data ke tabel payments
-        Payment::create([
-            'parking_id' => $parking->id,
-            'petugas_id' => Auth::id(),
-            'amount'     => $parking->total_fee,
-            'cash'       => $cash,
-            'change'     => $change,
-            'type'       => 'non_member',
+        // Cek sudah bayar
+        if ($parking->payment) {
+            return back()->with('error', 'Parkir ini sudah melakukan pembayaran!');
+        }
+
+        $license_plate = $request->license_plate;
+        $kategori      = $request->kategori;
+        $totalFee      = $parking->calculateFee($kategori);
+
+        // Tentukan tipe dan kembalian
+        if ($parking->member_id) {
+            // MEMBER
+            if ($parking->member->status->nama === 'belum_lunas') {
+                return back()->with('error', 'Member belum melunasi tagihan.');
+            }
+            $type     = 'member';
+            $memberId = $parking->member_id;
+            $cash     = $totalFee;
+            $change   = 0;
+        } else {
+            // NON MEMBER
+            $type     = 'non_member';
+            $memberId = null;
+            $cash     = $request->cash;
+
+            if ($cash < $totalFee) {
+                return back()->with('error', "Uang tidak mencukupi! Total: Rp ".number_format($totalFee));
+            }
+            $change = $cash - $totalFee;
+        }
+
+        // Simpan payment
+        $payment = Payment::create([
+            'parking_id'    => $parking->id,
+            'member_id'     => $memberId,
+            'petugas_id'    => Auth::id(),
+            'amount'        => $totalFee,
+            'cash'          => $cash,
+            'change'        => $change,
+            'type'          => $type,
+            'kategori'      => $kategori,
+            'license_plate' => $license_plate,
         ]);
 
-        // Update parking agar check_out tidak bisa dipakai lagi
+        // Update check_out
         $parking->update([
             'check_out' => now(),
+            'total_fee' => $totalFee,
         ]);
 
-        return redirect()->route('petugas.checkout.show', $parking->id)
-            ->with('success', 'Pembayaran Berhasil!');
+        // Generate PDF struk
+        $pdf = Pdf::loadView('petugas.invoice', [
+            'parking' => $parking,
+            'payment' => $payment,
+        ]);
+
+        return $pdf->download('struk_parkir_'.$parking->id.'.pdf');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Parking $parking)
     {
-        //
+        return view('petugas.checkout', compact('parking'));
+    }
+
+    public function checkOut(Parking $parking)
+    {
+        // Set check_out sekarang
+        $parking->check_out = now();
+
+        // Hitung total fee
+        $parking->total_fee = $parking->calculateFee();
+        $parking->save();
+
+        return view('petugas.checkout', compact('parking'));
     }
 
     /**
@@ -102,14 +155,88 @@ class PaymentController extends Controller
         //
     }
 
-    private function calculateFee(Parking $parking)
+    public function processScan(Request $request)
     {
-        $jamMasuk = strtotime($parking->check_in);
-        $jamKeluar = strtotime($parking->check_out ?? now());
-        $selisihJam = ceil(($jamKeluar - $jamMasuk) / 3600);
+        $request->validate(['parking_id' => 'required|integer|exists:parkings,id']);
 
-        if ($selisihJam <= 1) return 3000;
+        $parking = Parking::find($request->parking_id);
 
-        return 3000 + (($selisihJam - 1) * 2000);
+        if (!$parking) {
+            return back()->with('error', 'Parkir tidak ditemukan!');
+        }
+
+        return redirect()->route('petugas.checkout.show', $parking->id);
+    }
+
+    public function scanMemberForm()
+    {
+        return view('petugas.scanMember'); // halaman scan kartu / ID member
+    }
+
+    public function processMemberScan(Request $request)
+    {
+        $request->validate([
+            'member_id' => 'required|exists:members,id',
+        ]);
+
+        $member = Member::with('status', 'monthlyBills')->findOrFail($request->member_id);
+
+        // Format bulan sekarang: YYYY-MM
+        $currentMonth = now()->format('Y-m');
+
+        // Ambil atau buat tagihan bulan ini
+        $monthlyBill = MonthlyBill::firstOrCreate(
+            ['member_id' => $member->id, 'month' => $currentMonth],
+            ['amount' => 150000, 'status' => 'belum_lunas']
+        );
+
+        return view('petugas.memberPayment', compact('member', 'monthlyBill'));
+    }
+
+    // ===============================
+    // 3. Proses pembayaran member
+    // ===============================
+    public function payMember(Request $request)
+    {
+        $request->validate([
+            'member_id' => 'required|exists:members,id',
+        ]);
+
+        $member = Member::with('status', 'monthlyBills')->findOrFail($request->member_id);
+        $currentMonth = now()->format('Y-m');
+        $monthlyBill = MonthlyBill::where('member_id', $member->id)
+                            ->where('month', $currentMonth)
+                            ->firstOrFail();
+
+        if ($monthlyBill->status === 'lunas') {
+            return back()->with('error', 'Tagihan bulan ini sudah lunas.');
+        }
+
+        $amount = $monthlyBill->amount;
+
+        // Simpan payment
+        $payment = Payment::create([
+            'member_id' => $member->id,
+            'monthly_bill_id'  => $monthlyBill->id,
+            'petugas_id' => Auth::id(),
+            'amount' => $amount,
+            'cash' => $amount,
+            'change' => 0,
+            'type' => 'member',
+            'kategori' => 'pembayaran_member',
+            'license_plate' => 'null',
+        ]);
+
+        // Update monthly_bill menjadi lunas
+        $monthlyBill->update(['status' => 'lunas']);
+
+        // Update status member
+        $lunasStatus = Status::where('name', 'lunas')->first();
+        if ($lunasStatus) {
+            $member->update(['status_id' => $lunasStatus->id]);
+        }
+
+        return redirect()->route('petugas.memberPayment')
+                         ->with('success', 'Pembayaran bulan ini berhasil!');
     }
 }

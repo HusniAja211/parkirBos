@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MonthlyBillController;
 use App\Http\Controllers\NonMemberController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\UserController;
@@ -13,6 +14,7 @@ use App\Http\Controllers\ParkingController;
 Route::get('/', function () {
     return view('parkir');
 });
+
 
 // ===============================
 // Group untuk admin
@@ -26,7 +28,7 @@ Route::middleware(['auth', 'verified', 'role:admin'])
         Route::resource('employeeList', UserController::class);
 
         // page laporan pembayaran member
-        Route::resource('member', PaymentController::class)->only(['index']);
+        Route::resource('member', MonthlyBillController::class)->only(['index']);
         Route::resource('nonmember', NonMemberController::class)->only(['index']);
 
         // Register petugas tapi harus login sebagai admin dulu
@@ -45,11 +47,21 @@ Route::middleware(['auth', 'verified'])
         Route::resource('member', MemberController::class);
         Route::resource('parking', ParkingController::class);
         Route::resource('payment', PaymentController::class);
-       
-         // Checkout NON MEMBER
-        Route::get('/checkout/{parking}', [PaymentController::class, 'checkout'])->name('checkout.show');
-        Route::post('/checkout/{parking}', [PaymentController::class, 'store'])->name('checkout.store');
 
+        // Scan tiket
+        Route::get('/payment/scan', [PaymentController::class, 'scanOutForm'])->name('payment.scan');
+        Route::post('/payment/scan', [PaymentController::class, 'processScan'])->name('payment.processScan');
+
+        // Checkout
+        Route::get('/checkout/{parking}', [PaymentController::class, 'checkOut'])->name('checkout.show');
+
+        // Store payment
+        Route::post('/payment/store', [PaymentController::class, 'store'])->name('payment.store');
+
+         // ======= Member Payment Bulanan =======
+        Route::get('/member-payment', [PaymentController::class, 'scanMemberForm'])->name('memberPayment'); // form scan member
+        Route::post('/member-payment', [PaymentController::class, 'processMemberScan'])->name('processMemberScan'); // proses scan ID member
+        Route::post('/member-payment/pay', [PaymentController::class, 'payMember'])->name('payMember'); // proses bayar
     });
 
 // ===============================

@@ -47,7 +47,7 @@ class MemberController extends Controller
         ]);
 
         // Folder QR
-        $qrPath = public_path('qrcodes');
+        $qrPath = public_path('qrcodes_members');
         if (!file_exists($qrPath)) {
             mkdir($qrPath, 0755, true);
         }

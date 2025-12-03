@@ -1,3 +1,6 @@
+import Swal from 'sweetalert2';
+window.Swal = Swal;
+
 window.showSuccessAlert = function(message) {
     Swal.fire({
         title: "Berhasil!",

@@ -3,13 +3,13 @@
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-            <h1 class="text-2xl font-bold text-slate-800">Laporan Member</h1>
+            <h1 class="text-2xl font-bold text-slate-800">Laporan Parkir</h1>
             <p class="text-sm text-slate-500 mt-1">Rekapitulasi Parkir</p>
         </div>
-         <a href="{{ route('petugas.member.create') }}" class="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-lg font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:border-blue-800 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150 shadow-md">
-            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-            Tambah Member
-        </a>
+        <button onclick="window.print()" class="inline-flex items-center px-4 py-2 bg-white border border-slate-300 rounded-lg font-semibold text-xs text-slate-700 uppercase tracking-widest shadow-sm hover:bg-slate-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
+            Print to PDF
+        </button>
     </div>
 
     <div class="bg-white shadow-sm rounded-xl border border-slate-200 overflow-hidden">
@@ -30,9 +30,9 @@
                    @forelse ($parkings as $parking)
                     <tr class="hover:bg-blue-50/30 transition-colors">
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $parking->token }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $parking->token ?? 'non member' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-800">{{ $parking->member->name ?? 'non member'}}</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->kategori}}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->payment->kategori}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->check_in}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->check_out ?? 'Belum keluar'}}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-center text-slate-600">{{ $parking->total_fee}}</td>

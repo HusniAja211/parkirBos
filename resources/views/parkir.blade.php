@@ -4,9 +4,6 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Digital Parking</title>
-        <!-- Asumsi Anda menggunakan Vite untuk Tailwind CSS -->
-        @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/sweetalert2.js'])
-
         <!-- Menggunakan font Inter dari CDN Google Fonts -->
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet" />
         <style>
@@ -39,31 +36,14 @@
                         Tekan tombol di bawah untuk mencetak karcis masuk Anda.
                     </p>
                     <!-- BUTTON CETAK KARCIS -->
-                    <button
-                        id="printButton"
-                        class="w-full transform rounded-xl bg-blue-600 px-6 py-3 text-xl font-bold uppercase text-white shadow-lg shadow-blue-300/50 transition duration-300 hover:scale-[1.01] hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-400 active:scale-[0.99]"
-                    >
-                        Cetak Karcis
-                    </button>
                     <form id="parkingForm" action="{{ route('petugas.parking.store') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="kategori" id="kategoriInput" />
-                        <!-- DROPDOWN KATEGORI (AWALNYA DISSEMBUNYIKAN) -->
-                        <div id="kategoriDropdown" class="mt-4 hidden space-y-3">
-                            <button
-                                data-kategori="motor"
-                                class="w-full rounded-xl bg-green-600 px-6 py-3 font-bold text-white hover:bg-green-700"
-                            >
-                                Motor
-                            </button>
-
-                            <button
-                                data-kategori="mobil"
-                                class="w-full rounded-xl bg-purple-600 px-6 py-3 font-bold text-white hover:bg-purple-700"
-                            >
-                                Mobil
-                            </button>
-                        </div>
+                        <button
+                            id="printButton"
+                            class="w-full transform rounded-xl bg-blue-600 px-6 py-3 text-xl font-bold uppercase text-white shadow-lg shadow-blue-300/50 transition duration-300 hover:scale-[1.01] hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-400 active:scale-[0.99]"
+                        >
+                            Cetak Karcis
+                        </button>
                         <!-- Loading -->
                         <p class="pt-2 text-xs text-blue-500">
                             * Mohon tunggu sejenak, karcis akan keluar secara otomatis.
@@ -79,13 +59,13 @@
                 </div>
 
                 <!-- Bagian Input Scan Kode -->
-                <section class="space-y-4">
-                    <p class="text-center text-base font-light text-gray-700">
-                        <span class="font-semibold text-blue-600">Instruksi Scan:</span>
-                        Masukkan atau pindai kode QR/tiket untuk verifikasi.
-                    </p>
-
-                    <form id="scan-form" action="{{ route('petugas.payment.store') }}" method="POST">
+                <form id="scan-form" action="{{ route('petugas.parking.store') }}" method="POST">
+                    @csrf
+                    <section class="space-y-4">
+                        <p class="text-center text-base font-light text-gray-700">
+                            <span class="font-semibold text-blue-600">Instruksi Scan:</span>
+                            Masukkan atau pindai kode QR/tiket untuk verifikasi.
+                        </p>
                         <div class="relative">
                             <input
                                 type="text"
@@ -94,7 +74,7 @@
                                 placeholder="Masukkan atau pindai kode tiket di sini..."
                                 class="w-full rounded-xl border-2 border-blue-400 bg-white py-3 pl-4 pr-12 text-base text-gray-800 placeholder-gray-400 transition focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
                                 autofocus
-                                onkeyup="handleScan(event)"/>
+                                autocomplete="off"/>
                             <!-- Ikon Scanner -->
                             <svg
                                 class="absolute right-3 top-1/2 h-6 w-6 -translate-y-1/2 transform text-blue-500"
@@ -105,7 +85,8 @@
                                     stroke-linecap="round"
                                     stroke-linejoin="round"
                                     stroke-width="2"
-                                    d="M4 7v10m16-10v10M6 10h12M6 14h12M9 5v14m6-14v14" />
+                                    d="M4 7v10m16-10v10M6 10h12M6 14h12M9 5v14m6-14v14"
+                                />
                             </svg>
                         </div>
 
@@ -135,4 +116,12 @@
             </div>
         </div>
     </body>
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/sweetalert2.js'])
+    @if (session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showSuccessAlert("{{ session('success') }}")
+            })
+        </script>
+    @endif
 </html>
